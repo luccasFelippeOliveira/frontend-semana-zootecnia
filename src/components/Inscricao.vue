@@ -8,13 +8,32 @@
         <v-form>
           <v-layout column>
             <v-flex>
-              <v-text-field name="nome" label="Nome Completo" id="nome" v-model="name" required></v-text-field>
+              <v-radio-group v-model="radioGroup">
+                <v-radio label="IFTM" value="iftm" ></v-radio>
+                <v-radio label="Comunidade Externa" value="comunidadeExterna"></v-radio>
+              </v-radio-group>
             </v-flex>
-            <v-flex>
-              <v-text-field name="ra" label="R.A." id="password" type="number" required></v-text-field>
+            <v-flex v-if="isIftm">
+              <v-flex >
+                <v-select :items="items" label="Curso"></v-select>
+              </v-flex>
+              <v-flex>
+                <v-text-field label="Nome Completo" id="nome" v-model="name" required></v-text-field>
+              </v-flex>
+              <v-flex>
+                <v-text-field label="R.A." id="password" type="number" required></v-text-field>
+              </v-flex>
             </v-flex>
-            <v-flex>
-              <v-select :items="items" label="Curso"></v-select>
+            <v-flex v-else>
+              <v-flex>
+                <v-text-field label="CPF" id="cpf" required></v-text-field>
+              </v-flex>
+              <v-flex>
+                <v-text-field label="Nome Completo" id="nome" required></v-text-field>
+              </v-flex>
+              <v-flex>
+                <v-text-field label="Instituição" id="instituicao" required></v-text-field>
+              </v-flex>
             </v-flex>
             <v-flex class="text-xs-center" mt-5>
               <v-btn color="primary" type="submit">Sign In</v-btn>
@@ -34,7 +53,18 @@ export default {
       items: [
         { text: 'Zootecnia' },
         { text: 'Outros Cursos' }
-      ]
+      ],
+      radioGroup: 'iftm',
+      isIftm: true
+    }
+  },
+  watch: {
+    radioGroup: function (val) {
+      if (val === 'iftm') {
+        this.isIftm = true
+      } else {
+        this.isIftm = false
+      }
     }
   }
 }
