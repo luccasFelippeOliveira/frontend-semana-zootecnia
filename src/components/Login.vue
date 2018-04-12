@@ -15,7 +15,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="success" :disabled="!valid">Entrar</v-btn>
+            <v-btn color="success" :disabled="!valid" @click="login">Entrar</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import router from '@/router'
+
 export default {
   name: 'Login',
   data () {
@@ -37,6 +39,13 @@ export default {
       passwordRules: [
         (v) => !!v || 'Senha não pode ser vazia'
       ]
+    }
+  },
+  methods: {
+    login () {
+      console.log('ok loggin')
+      router.push('/admin')
+      return true
     }
   }
 }
