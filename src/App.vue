@@ -9,7 +9,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn flat color="error">
+        <v-btn flat color="error" :to="'/login'">
           <v-icon>lock</v-icon>
         </v-btn>
       </v-toolbar-items>
