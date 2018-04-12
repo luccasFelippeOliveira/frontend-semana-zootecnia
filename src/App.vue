@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-toolbar>
-      <v-toolbar-side-icon>
+      <v-toolbar-side-icon :to="'/'">
           <img src="./assets/iftm-logo.svg">
       </v-toolbar-side-icon>
       <v-toolbar-title>
