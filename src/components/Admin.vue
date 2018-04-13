@@ -20,6 +20,7 @@
             <v-tab-item>
               <v-card flat>
                 <v-card-text>Pagamento body</v-card-text>
+                <item-table-pagamento></item-table-pagamento>
               </v-card>
             </v-tab-item>
             <v-tab>
@@ -39,6 +40,7 @@
 
 <script>
 import router from '@/router'
+import ItemTablePagamento from './ItemTablePagamento.vue'
 
 export default {
   name: 'Admin',
@@ -46,6 +48,9 @@ export default {
     logOut () {
       router.push('/')
     }
+  },
+  components: {
+    ItemTablePagamento
   }
 }
 </script>
