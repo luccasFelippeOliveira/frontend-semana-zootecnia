@@ -20,13 +20,25 @@
             </v-flex>
             <v-flex v-if="isIftm">
               <v-flex >
-                <v-select :items="items" label="Curso" v-model="curso" :rules="cursoRules" required></v-select>
+                <v-select :items="items" item-text="Nome" label="Curso" v-model="curso" :rules="cursoRules" required></v-select>
               </v-flex>
               <v-flex>
                 <v-text-field label="Nome Completo" v-model="nome" :rules="nameRules" required></v-text-field>
               </v-flex>
               <v-flex>
                 <v-text-field label="R.A." v-model="ra" id="txtRAId" :rules="raRules"  required></v-text-field>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1" required></v-select>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2" required></v-select>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1" required></v-select>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta1" required></v-select>
               </v-flex>
             </v-flex>
             <v-flex v-else>
@@ -38,6 +50,18 @@
               </v-flex>
               <v-flex>
                 <v-text-field label="Instituição" v-model="instituicao" :rules="instituicaoRules" required></v-text-field>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1" required></v-select>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2" required></v-select>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1" required></v-select>
+              </v-flex>
+              <v-flex >
+                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta1" required></v-select>
               </v-flex>
             </v-flex>
             <v-flex class="text-xs-center" mt-5>
@@ -52,15 +76,17 @@
 
 <script>
 import CPF from 'gerador-validador-cpf'
+import axios from 'axios'
 
 export default {
   name: 'Inscricao',
   data () {
     return {
-      items: [
-        { text: 'Zootecnia' },
-        { text: 'Outros Cursos' }
-      ],
+      items: [],
+      minicursoQuartaManha: [],
+      minicursoQuartaTarde: [],
+      minicursoQuintaManha: [],
+      minicursoQuintaTarde: [],
       formValid: false,
       radioGroup: 'iftm',
       isIftm: true,
@@ -72,6 +98,10 @@ export default {
       ra: '',
       cpf: '',
       instituicao: '',
+      miniCursoQuarta1: '',
+      miniCursoQuarta2: '',
+      miniCursoQuinta1: '',
+      miniCursoQuinta2: '',
       nameRules: [
         (v) => !!v || 'Nome não pode ser vazio.',
         (v) => /^[a-zA-Z\s]+$/.test(v) || 'Nome não pode conter números'
@@ -118,6 +148,26 @@ export default {
     limpaCampos () {
       this.$refs.form.reset()
     }
+  },
+  mounted () {
+    axios({ method: 'GET', 'url': 'http://localhost:1323/cursos' }).then(result => {
+      result.data.forEach(element => {
+        console.log(element)
+        this.items.push(element)
+      })
+    }, error => {
+      console.error(error)
+    })
+
+    axios({ method: 'GET', url: 'http://localhost:1323/minicursos' }).then(result => {
+      let minicursos = []
+      result.data.forEach(element => {
+        minicursos.push(element)
+      })
+      console.log(minicursos)
+    }, error => {
+      console.error(error)
+    })
   }
 }
 </script>
