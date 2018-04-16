@@ -26,24 +26,24 @@
                 <v-text-field label="Nome Completo" v-model="nome" :rules="nameRules" required></v-text-field>
               </v-flex>
               <v-flex>
-                <v-text-field label="R.A." v-model="ra" id="txtRAId" :rules="raRules"  required></v-text-field>
+                <v-text-field label="R.A." v-model="cpf_ra" id="txtRAId" :rules="raRules"  required></v-text-field>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1" required></v-select>
+                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2" required></v-select>
+                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1" required></v-select>
+                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta1" required></v-select>
+                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta2"></v-select>
               </v-flex>
             </v-flex>
             <v-flex v-else>
               <v-flex>
-                <v-text-field label="CPF" id="cpf" mask="###.###.###-##" v-model="cpf" :rules="cpfRules" required></v-text-field>
+                <v-text-field label="CPF" id="cpf" mask="###.###.###-##" v-model="cpf_ra" :rules="cpfRules" required></v-text-field>
               </v-flex>
               <v-flex>
                 <v-text-field label="Nome Completo" v-model="nome" :rules="nameRules" required></v-text-field>
@@ -52,16 +52,16 @@
                 <v-text-field label="Instituição" v-model="instituicao" :rules="instituicaoRules" required></v-text-field>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1" required></v-select>
+                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1" ></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2" required></v-select>
+                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1" required></v-select>
+                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta1" required></v-select>
+                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta2"></v-select>
               </v-flex>
             </v-flex>
             <v-flex class="text-xs-center" mt-5>
@@ -95,8 +95,7 @@ export default {
       alertMsg: '',
       curso: '',
       nome: '',
-      ra: '',
-      cpf: '',
+      cpf_ra: '',
       instituicao: '',
       miniCursoQuarta1: '',
       miniCursoQuarta2: '',
@@ -134,11 +133,24 @@ export default {
   },
   methods: {
     fazerInscricao () {
+      let inscricao = {}
+
+      inscricao['cpf_ra'] = this.cpf_ra
+      inscricao['nome'] = this.nome
+      inscricao['minicurso_1'] = this.miniCursoQuarta1
+      inscricao['minicurso_2'] = this.miniCursoQuarta2
+      inscricao['minicurso_3'] = this.miniCursoQuinta1
+      inscricao['minicurso_4'] = this.miniCursoQuinta2
+
       if (this.isIftm) {
-        console.log('do nothing')
+        inscricao['curso'] = this.curso
+        inscricao['intituicao'] = 'IFTM'
       } else {
-        console.log('Do nothing')
+        inscricao['curso'] = null
+        inscricao['instituicao'] = this.instituicao
       }
+
+      console.log(inscricao)
 
       // Metodo para fazer a inscricao.
       this.alertType = 'success'
@@ -152,21 +164,38 @@ export default {
   mounted () {
     axios({ method: 'GET', 'url': 'http://localhost:1323/cursos' }).then(result => {
       result.data.forEach(element => {
-        console.log(element)
         this.items.push(element)
       })
     }, error => {
       console.error(error)
     })
 
-    axios({ method: 'GET', url: 'http://localhost:1323/minicursos' }).then(result => {
-      let minicursos = []
-      result.data.forEach(element => {
-        minicursos.push(element)
-      })
-      console.log(minicursos)
-    }, error => {
-      console.error(error)
+    axios.post('http://localhost:1323/minicursos', {
+      DataInicio: new Date(2018, 4, 16, 7, 0).getTime() / 1000,
+      DataFim: new Date(2018, 4, 16, 12, 0).getTime() / 1000
+    }).then(response => {
+      this.minicursoQuartaManha = response.data
+    })
+
+    axios.post('http://localhost:1323/minicursos', {
+      DataInicio: new Date(2018, 4, 16, 12, 0).getTime() / 1000,
+      DataFim: new Date(2018, 4, 16, 18, 0).getTime() / 1000
+    }).then(response => {
+      this.minicursoQuartaTarde = response.data
+    })
+
+    axios.post('http://localhost:1323/minicursos', {
+      DataInicio: new Date(2018, 4, 17, 7, 0).getTime() / 1000,
+      DataFim: new Date(2018, 4, 17, 12, 0).getTime() / 1000
+    }).then(response => {
+      this.minicursoQuintaManha = response.data
+    })
+
+    axios.post('http://localhost:1323/minicursos', {
+      DataInicio: new Date(2018, 4, 17, 12, 0).getTime() / 1000,
+      DataFim: new Date(2018, 4, 17, 18, 0).getTime() / 1000
+    }).then(response => {
+      this.minicursoQuintaTarde = response.data
     })
   }
 }
