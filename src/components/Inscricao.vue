@@ -20,7 +20,7 @@
             </v-flex>
             <v-flex v-if="isIftm">
               <v-flex >
-                <v-select :items="items" item-text="Nome" label="Curso" v-model="curso" :rules="cursoRules" required></v-select>
+                <v-select :items="items" item-text="nome" label="Curso" v-model="curso" :rules="cursoRules" required></v-select>
               </v-flex>
               <v-flex>
                 <v-text-field label="Nome Completo" v-model="nome" :rules="nameRules" required></v-text-field>
@@ -29,16 +29,16 @@
                 <v-text-field label="R.A." v-model="cpf_ra" id="txtRAId" :rules="raRules"  required></v-text-field>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1"></v-select>
+                <v-select :items="minicursoQuartaManha" item-text="nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2"></v-select>
+                <v-select :items="minicursoQuartaTarde" item-text="nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2" :disabled="desabilitarMiniCursoTardeQuarta()"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1"></v-select>
+                <v-select :items="minicursoQuintaManha" item-text="nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta2"></v-select>
+                <v-select :items="minicursoQuintaTarde" item-text="nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta2" :disabled="desabilitarMiniCursoTardeQuinta()"></v-select>
               </v-flex>
             </v-flex>
             <v-flex v-else>
@@ -52,16 +52,16 @@
                 <v-text-field label="Instituição" v-model="instituicao" :rules="instituicaoRules" required></v-text-field>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaManha" item-text="Nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1" ></v-select>
+                <v-select :items="minicursoQuartaManha" item-text="nome" label="Minicurso 16/05 (manhã)" v-model="miniCursoQuarta1" ></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuartaTarde" item-text="Nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2"></v-select>
+                <v-select :items="minicursoQuartaTarde" item-text="nome" label="Minicurso 16/05 (tarde)" v-model="miniCursoQuarta2" :disabled="desabilitarMiniCursoTardeQuarta()"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaManha" item-text="Nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1"></v-select>
+                <v-select :items="minicursoQuintaManha" item-text="nome" label="Minicurso 17/05 (manhã)" v-model="miniCursoQuinta1"></v-select>
               </v-flex>
               <v-flex >
-                <v-select :items="minicursoQuintaTarde" item-text="Nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta2"></v-select>
+                <v-select :items="minicursoQuintaTarde" item-text="nome" label="Minicurso 17/05 (tarde)" v-model="miniCursoQuinta2" :disabled="desabilitarMiniCursoTardeQuinta()"></v-select>
               </v-flex>
             </v-flex>
             <v-flex class="text-xs-center" mt-5>
@@ -97,10 +97,10 @@ export default {
       nome: '',
       cpf_ra: '',
       instituicao: '',
-      miniCursoQuarta1: '',
-      miniCursoQuarta2: '',
-      miniCursoQuinta1: '',
-      miniCursoQuinta2: '',
+      miniCursoQuarta1: null,
+      miniCursoQuarta2: null,
+      miniCursoQuinta1: null,
+      miniCursoQuinta2: null,
       nameRules: [
         (v) => !!v || 'Nome não pode ser vazio.',
         (v) => /^[a-zA-Z\s]+$/.test(v) || 'Nome não pode conter números'
@@ -114,7 +114,7 @@ export default {
       ],
       cpfRules: [
         (v) => !!v || 'CPF não pode ser vazio.',
-        (v) => CPF.validate(v) || 'Informe um CPF válido.'
+        (v) => CPF.validate(v === null ? '' : v) || 'Informe um CPF válido.'
       ],
       instituicaoRules: [
         (v) => !!v || 'O nome da instituição não pode ser vazio.'
@@ -132,15 +132,44 @@ export default {
     }
   },
   methods: {
+    desabilitarMiniCursoTardeQuarta () {
+      if (this.miniCursoQuarta1 === null) return false
+      if (this.miniCursoQuarta1.quantidadeHoras === 8) {
+        this.miniCursoQuarta2 = null
+        return true
+      }
+      return false
+    },
+    desabilitarMiniCursoTardeQuinta () {
+      if (this.miniCursoQuinta1 === null) return false
+      if (this.miniCursoQuinta1.quantidadeHoras === 8) {
+        this.miniCursoQuinta2 = null
+        return true
+      }
+      return false
+    },
     fazerInscricao () {
       let inscricao = {}
 
       inscricao['cpf_ra'] = this.cpf_ra
       inscricao['nome'] = this.nome
-      inscricao['minicurso_1'] = this.miniCursoQuarta1
-      inscricao['minicurso_2'] = this.miniCursoQuarta2
-      inscricao['minicurso_3'] = this.miniCursoQuinta1
-      inscricao['minicurso_4'] = this.miniCursoQuinta2
+      inscricao['minicursos'] = []
+
+      if (this.miniCursoQuarta1 !== null) {
+        inscricao['minicursos'].push(this.miniCursoQuarta1)
+      }
+
+      if (this.miniCursoQuarta2 !== null) {
+        inscricao['minicursos'].push(this.miniCursoQuarta2)
+      }
+
+      if (this.miniCursoQuinta1 !== null) {
+        inscricao['minicursos'].push(this.miniCursoQuinta1)
+      }
+
+      if (this.miniCursoQuinta2 !== null) {
+        inscricao['minicursos'].push(this.miniCursoQuinta2)
+      }
 
       if (this.isIftm) {
         inscricao['curso'] = this.curso
@@ -149,20 +178,34 @@ export default {
         inscricao['curso'] = null
         inscricao['instituicao'] = this.instituicao
       }
-
-      console.log(inscricao)
-
-      // Metodo para fazer a inscricao.
-      this.alertType = 'success'
-      this.alert = true
-      this.alertMsg = 'Inscrição feita com sucesso.'
+      axios.post(process.env.API_URL + '/inscricao', inscricao)
+        .then(response => {
+          if (response.status === 200) {
+            this.alertType = 'success'
+            this.alert = true
+            this.alertMsg = 'Inscrição feita com sucesso.'
+            window.pageYOffset = 0
+          }
+        })
+        .catch(err => {
+          if (err.response) {
+            this.alertType = 'error'
+            this.alert = true
+            if (err.response.status === 403) {
+              this.alertMsg = 'Iscrição já existe.'
+            } else {
+              this.alertMsg = 'Erro ao processar a inscrição por favor confira os dados.'
+            }
+            window.pageYOffset = 0
+          }
+        })
     },
     limpaCampos () {
       this.$refs.form.reset()
     }
   },
   mounted () {
-    axios({ method: 'GET', 'url': 'http://localhost:1323/cursos' }).then(result => {
+    axios({ method: 'GET', 'url': process.env.API_URL + '/cursos' }).then(result => {
       result.data.forEach(element => {
         this.items.push(element)
       })
@@ -170,33 +213,32 @@ export default {
       console.error(error)
     })
 
-    axios.post('http://localhost:1323/minicursos', {
-      DataInicio: new Date(2018, 4, 16, 7, 0).getTime() / 1000,
-      DataFim: new Date(2018, 4, 16, 12, 0).getTime() / 1000
-    }).then(response => {
-      this.minicursoQuartaManha = response.data
-    })
+    axios.get(process.env.API_URL + '/minicursos')
+      .then(result => {
+        let minicursos = result.data
+        let quartaManhaLimite = new Date(2018, 4, 16, 12 - 3, 0).getTime()
+        this.minicursoQuartaManha = minicursos.filter(minicurso => {
+          let d = new Date(minicurso.horarioComeco)
+          return d.getTime() <= quartaManhaLimite
+        })
 
-    axios.post('http://localhost:1323/minicursos', {
-      DataInicio: new Date(2018, 4, 16, 12, 0).getTime() / 1000,
-      DataFim: new Date(2018, 4, 16, 18, 0).getTime() / 1000
-    }).then(response => {
-      this.minicursoQuartaTarde = response.data
-    })
+        let quartaTardeLimite = new Date(2018, 4, 16, 17 - 3, 0).getTime()
+        this.minicursoQuartaTarde = minicursos.filter(minicurso => {
+          let d = new Date(minicurso.horarioComeco)
+          return d.getTime() >= quartaManhaLimite && d.getTime() <= quartaTardeLimite && minicurso.quantidadeHoras < 8
+        })
 
-    axios.post('http://localhost:1323/minicursos', {
-      DataInicio: new Date(2018, 4, 17, 7, 0).getTime() / 1000,
-      DataFim: new Date(2018, 4, 17, 12, 0).getTime() / 1000
-    }).then(response => {
-      this.minicursoQuintaManha = response.data
-    })
+        let quintaManhaLimite = new Date(2018, 4, 17, 12 - 3, 0).getTime()
+        this.minicursoQuintaManha = minicursos.filter(minicurso => {
+          let d = new Date(minicurso.horarioComeco)
+          return d.getTime() >= quartaTardeLimite && d.getTime() <= quintaManhaLimite
+        })
 
-    axios.post('http://localhost:1323/minicursos', {
-      DataInicio: new Date(2018, 4, 17, 12, 0).getTime() / 1000,
-      DataFim: new Date(2018, 4, 17, 18, 0).getTime() / 1000
-    }).then(response => {
-      this.minicursoQuintaTarde = response.data
-    })
+        this.minicursoQuintaTarde = minicursos.filter(minicurso => {
+          let d = new Date(minicurso.horarioComeco)
+          return d.getTime() >= quintaManhaLimite && minicurso.quantidadeHoras < 8
+        })
+      })
   }
 }
 </script>
