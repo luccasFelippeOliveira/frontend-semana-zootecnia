@@ -43,7 +43,6 @@ export default {
   },
   methods: {
     login () {
-      console.log('ok loggin')
       router.push('/admin')
       return true
     }

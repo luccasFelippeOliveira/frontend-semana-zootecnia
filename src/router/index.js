@@ -4,10 +4,11 @@ import Home from '@/components/Home'
 import Inscricao from '@/components/Inscricao'
 import Login from '@/components/Login'
 import Admin from '@/components/Admin'
+import store from '../store'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -32,3 +33,17 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const pathAdmin = to.path === '/admin'
+  const isAuthorized = store.state.isAuthenticated
+
+  if (pathAdmin && !isAuthorized) {
+    console.log('you cant go there')
+    next('/login')
+  } else {
+    next()
+  }
+})
+
+export default router
