@@ -25,6 +25,7 @@
 
 <script>
 import router from '@/router'
+import auth from '../auth'
 
 export default {
   name: 'Login',
@@ -43,6 +44,10 @@ export default {
   },
   methods: {
     login () {
+      auth.login(this, {
+        user: this.username,
+        pass: this.password
+      })
       router.push('/admin')
       return true
     }

@@ -2,7 +2,7 @@
   <v-app>
     <v-toolbar>
       <v-toolbar-side-icon :to="'/'">
-          <img src="./assets/iftm-logo.svg">
+          <img src="./assets/iftm-logo.svg" />
       </v-toolbar-side-icon>
       <v-toolbar-title>
         VIII &mdash; Semana da Zootecnia
@@ -27,3 +27,9 @@ export default {
   name: 'App'
 }
 </script>
+
+<style scoped>
+  img {
+    width: 36px;
+  }
+</style>
